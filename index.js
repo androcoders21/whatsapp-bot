@@ -1,42 +1,57 @@
 const qrcode = require("qrcode-terminal");
-
 const { LocalAuth, ChatTypes } = require("whatsapp-web.js");
 const { Client, RemoteAuth } = require('whatsapp-web.js');
 const { MongoStore } = require('wwebjs-mongo');
 const mongoose = require('mongoose');
+const puppeteer = require('puppeteer');
 
-mongoose.connect('mongodb+srv://azown:azownali123@cluster0.fkcjj3d.mongodb.net/watbot').then(() => {
+
+
+(async () => {
+  const browser = await puppeteer.launch({
+    executablePath: '/usr/bin/chromium-browser',
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
+
+  mongoose.connect('mongodb+srv://azown:azownali123@cluster0.fkcjj3d.mongodb.net/watbot').then(() => {
     const store = new MongoStore({ mongoose: mongoose });
     const client = new Client({
-        authStrategy: new RemoteAuth({
-            store: store,
-            backupSyncIntervalMs: 300000
-        })
+      authStrategy: new RemoteAuth({
+        store: store,
+        backupSyncIntervalMs: 300000
+      }),
+      puppeteer: {
+        browser: browser,
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage'
+        ]
+      }
     });
     client.on("ready", () => {
       console.log("Client is ready!");
-    
     });
     client.on("message", (message) => {
       console.log(message.body);
       if (message.body === "!ping") {
         message.reply("pong");
       }
-
     });
-    
-client.on("qr", (qr) => {
-  qrcode.generate(qr, { small: true });
-});
-client.on('remote_session_saved', () => {
-    console.log('Session saved successfully!');
-});
-
-    // You can now use the session to authenticate in other instances of the client
-
-
+    client.on("qr", (qr) => {
+      console.log("QR RECEIVED", qr);
+      qrcode.generate(qr, { small: true });
+    });
+    client.on('remote_session_saved', () => {
+      console.log('Session saved successfully!');
+    });
     client.initialize();
-}).catch(err => console.log(`Error: ${err}`));
+  }).catch((err) => {
+    console.log(err);
+  });
+
+})();
 
 // const client = new Client({
 //   authStrategy: new LocalAuth()

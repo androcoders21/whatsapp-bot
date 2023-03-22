@@ -10,7 +10,7 @@ process.env.CHROMIUM_BIN = '/usr/bin/chromium-browser';
 (async () => {
   const browser = await puppeteer.launch({
     executablePath: process.env.CHROMIUM_BIN,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    headless: true,
   });
 
   mongoose.connect('mongodb+srv://azown:azownali123@cluster0.fkcjj3d.mongodb.net/watbot').then(() => {

@@ -8,11 +8,13 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://azown:azownali123@cluster0.fkcjj3d.mongodb.net/watbot').then(() => {
     const store = new MongoStore({ mongoose: mongoose });
     const client = new Client({
-        authStrategy: new RemoteAuth({
-            store: store,
-            backupSyncIntervalMs: 300000
-        })
-    });
+      puppeteer: {
+          executablePath: '/usr/bin/chromium-browser',
+          headless: true,
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+      },
+      session: sessionData
+  });
     client.on("ready", () => {
       console.log("Client is ready!");
     

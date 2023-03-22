@@ -4,12 +4,6 @@ const { LocalAuth, ChatTypes } = require("whatsapp-web.js");
 const { Client, RemoteAuth } = require('whatsapp-web.js');
 const { MongoStore } = require('wwebjs-mongo');
 const mongoose = require('mongoose');
-const puppeteer = require('puppeteer');
-(async () => {
-  const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  });})()
-
 
 mongoose.connect('mongodb+srv://azown:azownali123@cluster0.fkcjj3d.mongodb.net/watbot').then(() => {
     const store = new MongoStore({ mongoose: mongoose });

@@ -4,6 +4,13 @@ const { Client, RemoteAuth } = require('whatsapp-web.js');
 const { MongoStore } = require('wwebjs-mongo');
 const mongoose = require('mongoose');
 const puppeteer = require('puppeteer');
+(async () => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto('https://www.google.com');
+  await page.screenshot({path: 'example.png'});
+  await browser.close();
+})();
 
 process.env.CHROMIUM_BIN = '/usr/bin/chromium-browser';
 mongoose.connect('mongodb+srv://azown:azownali123@cluster0.fkcjj3d.mongodb.net/watbot').then(() => {

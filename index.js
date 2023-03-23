@@ -6,52 +6,52 @@ const mongoose = require('mongoose');
 const puppeteer = require('puppeteer');
 
 process.env.CHROMIUM_BIN = '/usr/bin/chromium-browser';
-
-(async () => {
-  const browser = await puppeteer.launch({
-    
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+mongoose.connect('mongodb+srv://azown:azownali123@cluster0.fkcjj3d.mongodb.net/watbot').then(() => {
+  const store = new MongoStore({ mongoose: mongoose });
+  const client = new Client({
+    authStrategy: new RemoteAuth({
+      store: store,
+      backupSyncIntervalMs: 300000
+    }),
+    // puppeteer: {
+    //   browser: browser,
+    //   headless: true,
+    //   args: [
+    //     '--no-sandbox',
+    //     '--disable-setuid-sandbox',
+    //     '--disable-dev-shm-usage'
+    //   ]
+    // }
   });
-
-  mongoose.connect('mongodb+srv://azown:azownali123@cluster0.fkcjj3d.mongodb.net/watbot').then(() => {
-    const store = new MongoStore({ mongoose: mongoose });
-    const client = new Client({
-      authStrategy: new RemoteAuth({
-        store: store,
-        backupSyncIntervalMs: 300000
-      }),
-      puppeteer: {
-        browser: browser,
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage'
-        ]
-      }
-    });
-    client.on("ready", () => {
-      console.log("Client is ready!");
-    });
-    client.on("message", (message) => {
-      console.log(message.body);
-      if (message.body === "!ping") {
-        message.reply("pong");
-      }
-    });
-    client.on("qr", (qr) => {
-      console.log("QR RECEIVED", qr);
-      qrcode.generate(qr, { small: true });
-    });
-    client.on('remote_session_saved', () => {
-      console.log('Session saved successfully!');
-    });
-    client.initialize();
-  }).catch((err) => {
-    console.log(err);
+  client.on("ready", () => {
+    console.log("Client is ready!");
   });
+  client.on("message", (message) => {
+    console.log(message.body);
+    if (message.body === "!ping") {
+      message.reply("pong");
+    }
+  });
+  client.on("qr", (qr) => {
+    console.log("QR RECEIVED", qr);
+    qrcode.generate(qr, { small: true });
+  });
+  client.on('remote_session_saved', () => {
+    console.log('Session saved successfully!');
+  });
+  client.initialize();
+}).catch((err) => {
+  console.log(err);
+});
 
-})();
+// (async () => {
+//   const browser = await puppeteer.launch({
+//     args: ['--no-sandbox', '--disable-setuid-sandbox']
+//   });
+
+ 
+
+// })();
 
 // const client = new Client({
 //   authStrategy: new LocalAuth()
